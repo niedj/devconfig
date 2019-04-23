@@ -1,0 +1,66 @@
+﻿server:
+  port: 18767
+  servlet:
+    session:
+      timeout: 1800
+
+spring:
+  application:
+    name: rent-flowsheetclient-service-niedj
+    # 默认值
+  zipkin:
+    base-url: http://172.17.32.58:9411
+  sleuth:
+    sampler:
+      # Sleuth 默认采样算法的实现是 Reservoir sampling，具体的实现类是 PercentageBasedSampler，
+      # 默认的采样比例为: 0.1，即 10%。我们可以通过 spring.sleuth.sampler.probability 来设置，
+      # 所设置的值介于 0 到 1 之间，1 则表示全部采集
+      probability: 1.0
+  redis:
+    host: 172.17.11.239
+    port: 6379
+    #password: 123456
+    timeout: 6000ms
+    lettuce:
+      pool:
+        max-active: 8
+        max-wait: -1ms
+        max-idle: 8
+        min-idle: 0
+    database: 0
+  session:
+    store-type: redis
+  activemq:
+    broker-url: tcp://172.17.31.178:61616 
+    in-memory: true
+    packages:
+      trust-all: true
+    pool:
+      enabled:  false   
+eureka:
+  client:
+    service-url:
+#      defaultZone: http://root:root@localhost:18761/eureka/
+      defaultZone: http://172.17.32.58:8000/eureka/
+  instance:
+    # 不想使用主机名进行访问注册中心，也可以使用ip，但是需要先添加一条配置，该值默认false
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 1
+    lease-expiration-duration-in-seconds: 2
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,bus-refresh,shutdown
+  endpoint:
+    shutdown:
+      enabled: true #是否开启优雅停机
+      shutdown-time: 30 #强制停机时间(默认60)
+      shutdown-time-unit: SECONDS   #强制停机时间单位(默认SECONDS)
+      health-wait-time: 10 #关闭前等待健康监测时间(默认10),即在请求shutdown接口时,会延时这个时间进行Shutdown操作
+      health-wait-time-unit: SECONDS   #关闭前等待健康监测时间单位(默认SECONDS),即在请求shutdown接口时,会延时这个时间进行Shutdown操作
+
+logging:
+  level:
+    com.gxlu: INFO

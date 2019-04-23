@@ -1,0 +1,128 @@
+﻿server:
+  port: 18765
+  servlet:
+    session:
+      timeout: 1800
+
+spring:
+  application:
+    name: rent-commonclient-service-niedj
+    # 默认值
+  zipkin:
+    base-url: http://172.17.32.58:9411
+  sleuth:
+    sampler:
+      # Sleuth 默认采样算法的实现是 Reservoir sampling，具体的实现类是 PercentageBasedSampler，
+      # 默认的采样比例为: 0.1，即 10%。我们可以通过 spring.sleuth.sampler.probability 来设置，
+      # 所设置的值介于 0 到 1 之间，1 则表示全部采集
+      probability: 1.0
+  redis:
+    host: 172.17.11.239
+    port: 6379
+    #password: 123456
+    timeout: 6000ms
+    lettuce:
+      pool:
+        max-active: 8
+        max-wait: -1ms
+        max-idle: 8
+        min-idle: 0
+    database: 0
+  session:
+    store-type: redis
+  activemq:
+    broker-url: tcp://172.17.31.178:61616 
+    packages:
+      trust-all: true
+    in-memory: true
+    pool:
+      enabled:  false
+
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+# 自定义的主数据源配置信息
+primary:
+  datasource:
+    #druid相关配置
+    druid:
+      #监控统计拦截的filters
+      filters: stat
+      driverClassName: com.mysql.jdbc.Driver
+      #配置基本属性
+      url: jdbc:mysql://172.17.11.239:3306/rent2?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&autoReconnect=true&useSSL=false
+      username: rent2
+      password: rent2
+      #配置初始化大小/最小/最大
+      initialSize: 1
+      minIdle: 1
+      maxActive: 20
+      #获取连接等待超时时间
+      maxWait: 60000
+      #间隔多久进行一次检测，检测需要关闭的空闲连接
+      timeBetweenEvictionRunsMillis: 60000
+      #一个连接在池中最小生存的时间
+      minEvictableIdleTimeMillis: 300000
+      validationQuery: SELECT 'x'
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      #打开PSCache，并指定每个连接上PSCache的大小。oracle设为true，mysql设为false。分库分表较多推荐设置为false
+      poolPreparedStatements: false
+      maxPoolPreparedStatementPerConnectionSize: 20
+      connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+# 自定义的从数据源配置信息
+slave:
+  datasource:
+    #druid相关配置
+    druid:
+      #监控统计拦截的filters
+      filters: stat
+      driverClassName: com.mysql.jdbc.Driver
+      #配置基本属性
+      url: jdbc:mysql://172.17.11.239:3306/rent2?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&autoReconnect=true&useSSL=false
+      username: rent2
+      password: rent2
+      #配置初始化大小/最小/最大
+      initialSize: 1
+      minIdle: 1
+      maxActive: 20
+      #获取连接等待超时时间
+      maxWait: 60000
+      #间隔多久进行一次检测，检测需要关闭的空闲连接
+      timeBetweenEvictionRunsMillis: 60000
+      #一个连接在池中最小生存的时间
+      minEvictableIdleTimeMillis: 300000
+      validationQuery: SELECT 'x'
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      #打开PSCache，并指定每个连接上PSCache的大小。oracle设为true，mysql设为false。分库分表较多推荐设置为false
+      poolPreparedStatements: false
+      maxPoolPreparedStatementPerConnectionSize: 20
+eureka:
+  client:
+    service-url:
+#      defaultZone: http://root:root@localhost:18761/eureka/
+      defaultZone: http://172.17.32.58:8000/eureka/
+  instance:
+    # 不想使用主机名进行访问注册中心，也可以使用ip，但是需要先添加一条配置，该值默认false
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 1
+    lease-expiration-duration-in-seconds: 2
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,bus-refresh,shutdown
+  endpoint:
+    shutdown:
+      enabled: true #是否开启优雅停机
+      shutdown-time: 30 #强制停机时间(默认60)
+      shutdown-time-unit: SECONDS   #强制停机时间单位(默认SECONDS)
+      health-wait-time: 10 #关闭前等待健康监测时间(默认10),即在请求shutdown接口时,会延时这个时间进行Shutdown操作
+      health-wait-time-unit: SECONDS   #关闭前等待健康监测时间单位(默认SECONDS),即在请求shutdown接口时,会延时这个时间进行Shutdown操作
+
+logging:
+  level:
+    com.gxlu: INFO
